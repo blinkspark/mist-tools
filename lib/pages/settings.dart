@@ -19,6 +19,16 @@ class SettingsPage extends StatelessWidget {
       Colors.pink,
       Colors.brown,
     ];
+    final colorLabels = [
+      '蓝色',
+      '红色',
+      '绿色',
+      '橙色',
+      '紫色',
+      '青色',
+      '粉色',
+      '棕色',
+    ];
     final themeModes = [
       ThemeMode.system,
       ThemeMode.light,
@@ -41,26 +51,33 @@ class SettingsPage extends StatelessWidget {
             children: [
               Text('主题颜色：', style: Theme.of(context).textTheme.bodyLarge),
               Obx(
-                () => Row(
-                  children: colors.map(
-                    (color) {
-                      return GestureDetector(
-                        onTap: () => appController.seedColor.value = color,
-                        child: Container(
-                          margin: const EdgeInsets.symmetric(horizontal: 4),
-                          width: 32,
-                          height: 32,
-                          decoration: BoxDecoration(
-                            color: color,
-                            shape: BoxShape.circle,
-                            border: appController.seedColor.value == color
-                                ? Border.all(width: 3, color: Colors.black)
-                                : null,
+                () => DropdownButton<MaterialColor>(
+                  focusColor: Colors.transparent,
+                  value: appController.seedColor.value,
+                  items: List.generate(
+                    colors.length,
+                    (i) => DropdownMenuItem(
+                      value: colors[i],
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Container(
+                            width: 16,
+                            height: 16,
+                            margin: const EdgeInsets.only(right: 8),
+                            decoration: BoxDecoration(
+                              color: colors[i],
+                              shape: BoxShape.circle,
+                            ),
                           ),
-                        ),
-                      );
-                    },
-                  ).toList(),
+                          Text(colorLabels[i]),
+                        ],
+                      ),
+                    ),
+                  ),
+                  onChanged: (color) {
+                    if (color != null) appController.seedColor.value = color;
+                  },
                 ),
               ),
             ],

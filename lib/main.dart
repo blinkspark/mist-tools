@@ -15,19 +15,22 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetMaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: getThemeData(Brightness.light),
-      darkTheme: getThemeData(Brightness.dark),
-      themeMode: ThemeMode.system,
-      home: MainFrame(),
-    );
+    final appController = Get.find<AppController>();
+    return Obx(() {
+      return GetMaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: getThemeData(Brightness.light, appController.seedColor.value),
+        darkTheme: getThemeData(Brightness.dark, appController.seedColor.value),
+        themeMode: appController.themeMode.value,
+        home: MainFrame(),
+      );
+    });
   }
 
-  ThemeData getThemeData(Brightness brightness) {
+  ThemeData getThemeData(Brightness brightness, Color seedColor) {
     final baseTheme = ThemeData(
       colorScheme: ColorScheme.fromSeed(
-        seedColor: Colors.blue,
+        seedColor: seedColor,
         brightness: brightness,
       ),
     );

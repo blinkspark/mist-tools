@@ -9,16 +9,15 @@ class SettingsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final appController = Get.find<AppController>();
-    final colors = [
-      Colors.blue,
-      Colors.red,
-      Colors.green,
-      Colors.orange,
-      Colors.purple,
-      Colors.teal,
-      Colors.pink,
-      Colors.brown,
+    final appController = Get.find<AppController>();    final colors = [
+      const Color(0xFF2196F3), // 蓝色 (Colors.blue.shade500)
+      const Color(0xFFF44336), // 红色 (Colors.red.shade500)
+      const Color(0xFF4CAF50), // 绿色 (Colors.green.shade500)
+      const Color(0xFFFF9800), // 橙色 (Colors.orange.shade500)
+      const Color(0xFF9C27B0), // 紫色 (Colors.purple.shade500)
+      const Color(0xFF009688), // 青色 (Colors.teal.shade500)
+      const Color(0xFFE91E63), // 粉色 (Colors.pink.shade500)
+      const Color(0xFF795548), // 棕色 (Colors.brown.shade500)
     ];
     final colorLabels = ['蓝色', '红色', '绿色', '橙色', '紫色', '青色', '粉色', '棕色'];
     final themeModes = [ThemeMode.system, ThemeMode.light, ThemeMode.dark];
@@ -35,12 +34,12 @@ class SettingsPage extends StatelessWidget {
             title: '用户',
             children: [
               SettingSectionItem(
-                title: '用户名：',
+                title: '用户名',
                 trailing: Text('appController.username.value'),
                 onPressed: () {},
               ),
               SettingSectionItem(
-                title: '邮箱：',
+                title: '邮箱',
                 trailing: Text('appController.email.value'),
                 onPressed: () {},
               ),
@@ -50,9 +49,9 @@ class SettingsPage extends StatelessWidget {
             title: '主题',
             children: [
               SettingSectionItem(
-                title: '主题颜色：',
+                title: '主题颜色',
                 trailing: Obx(
-                  () => DropdownButton<MaterialColor>(
+                  () => DropdownButton<Color>(
                     focusColor: Colors.transparent,
                     value: appController.seedColor.value,
                     items: List.generate(
@@ -84,7 +83,7 @@ class SettingsPage extends StatelessWidget {
                 onPressed: () {},
               ),
               SettingSectionItem(
-                title: '主题模式：',
+                title: '主题模式',
                 trailing: Obx(
                   () => DropdownButton<ThemeMode>(
                     focusColor: Colors.transparent,

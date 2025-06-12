@@ -1,11 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:logger/logger.dart';
+import 'package:mist_tools/services/app_config_service.dart';
 
 import 'controllers/app_controller.dart';
 import 'pages/main_frame.dart';
 
-void main() {
+void main() async {
+  Get.put(Logger());
+  await Get.putAsync<IAppConfigService>(() async {
+    final service = AppConfigService();
+    await service.init();
+    return service;
+  });
   Get.put(AppController());
   runApp(const MainApp());
 }

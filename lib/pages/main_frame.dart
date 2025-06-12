@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:mist_tools/pages/settings.dart';
 
 import '../controllers/app_controller.dart';
-import '../widgets/main_frame/nav_drawer.dart';
 import '../widgets/main_frame/navbar.dart';
 
 class MainFrame extends GetResponsiveView {
@@ -16,17 +15,29 @@ class MainFrame extends GetResponsiveView {
       builder: (context) {
         return Scaffold(
           appBar: AppBar(
-            title: Text('主页'),
+            title: Obx(() {
+              return Text(getTitle(appController.navIndex.value));
+            }),
             backgroundColor: Theme.of(context).colorScheme.primaryContainer,
           ),
-          drawer: NavDrawer(),
           body: Obx(() {
             return getPage(appController.navIndex.value);
           }),
           bottomNavigationBar: Navbar(),
         );
-      }
+      },
     );
+  }
+
+  String getTitle(int index) {
+    switch (index) {
+      case 0:
+        return '主页';
+      case 1:
+        return '设置';
+      default:
+        return '未知页面';
+    }
   }
 
   Widget getPage(int index) {

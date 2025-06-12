@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:mist_tools/widgets/settings/setting_section.dart';
 
 import '../controllers/app_controller.dart';
 
@@ -19,95 +20,93 @@ class SettingsPage extends StatelessWidget {
       Colors.pink,
       Colors.brown,
     ];
-    final colorLabels = [
-      '蓝色',
-      '红色',
-      '绿色',
-      '橙色',
-      '紫色',
-      '青色',
-      '粉色',
-      '棕色',
-    ];
-    final themeModes = [
-      ThemeMode.system,
-      ThemeMode.light,
-      ThemeMode.dark,
-    ];
-    final themeModeLabels = [
-      '跟随系统',
-      '浅色',
-      '深色',
-    ];
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Text('设置', style: Theme.of(context).textTheme.titleMedium),
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-          child: Row(
+    final colorLabels = ['蓝色', '红色', '绿色', '橙色', '紫色', '青色', '粉色', '棕色'];
+    final themeModes = [ThemeMode.system, ThemeMode.light, ThemeMode.dark];
+    final themeModeLabels = ['跟随系统', '浅色', '深色'];
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Text('设置', style: Theme.of(context).textTheme.titleMedium),
+          ),
+          SettingSection(
+            title: '用户',
             children: [
-              Text('主题颜色：', style: Theme.of(context).textTheme.bodyLarge),
-              Obx(
-                () => DropdownButton<MaterialColor>(
-                  focusColor: Colors.transparent,
-                  value: appController.seedColor.value,
-                  items: List.generate(
-                    colors.length,
-                    (i) => DropdownMenuItem(
-                      value: colors[i],
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Container(
-                            width: 16,
-                            height: 16,
-                            margin: const EdgeInsets.only(right: 8),
-                            decoration: BoxDecoration(
-                              color: colors[i],
-                              shape: BoxShape.circle,
+              SettingSectionItem(
+                title: '用户名：',
+                trailing: Text('appController.username.value'),
+                onPressed: () {},
+              ),
+              SettingSectionItem(
+                title: '邮箱：',
+                trailing: Text('appController.email.value'),
+                onPressed: () {},
+              ),
+            ],
+          ),
+          SettingSection(
+            title: '主题',
+            children: [
+              SettingSectionItem(
+                title: '主题颜色：',
+                trailing: Obx(
+                  () => DropdownButton<MaterialColor>(
+                    focusColor: Colors.transparent,
+                    value: appController.seedColor.value,
+                    items: List.generate(
+                      colors.length,
+                      (i) => DropdownMenuItem(
+                        value: colors[i],
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Container(
+                              width: 16,
+                              height: 16,
+                              margin: const EdgeInsets.only(right: 8),
+                              decoration: BoxDecoration(
+                                color: colors[i],
+                                shape: BoxShape.circle,
+                              ),
                             ),
-                          ),
-                          Text(colorLabels[i]),
-                        ],
+                            Text(colorLabels[i]),
+                          ],
+                        ),
                       ),
                     ),
+                    onChanged: (color) {
+                      if (color != null) appController.seedColor.value = color;
+                    },
                   ),
-                  onChanged: (color) {
-                    if (color != null) appController.seedColor.value = color;
-                  },
                 ),
+                onPressed: () {},
               ),
-            ],
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-          child: Row(
-            children: [
-              Text('主题模式：', style: Theme.of(context).textTheme.bodyLarge),
-              Obx(
-                () => DropdownButton<ThemeMode>(
-                  focusColor: Colors.transparent,
-                  value: appController.themeMode.value,
-                  items: List.generate(
-                    themeModes.length,
-                    (i) => DropdownMenuItem(
-                      value: themeModes[i],
-                      child: Text(themeModeLabels[i]),
+              SettingSectionItem(
+                title: '主题模式：',
+                trailing: Obx(
+                  () => DropdownButton<ThemeMode>(
+                    focusColor: Colors.transparent,
+                    value: appController.themeMode.value,
+                    items: List.generate(
+                      themeModes.length,
+                      (i) => DropdownMenuItem(
+                        value: themeModes[i],
+                        child: Text(themeModeLabels[i]),
+                      ),
                     ),
+                    onChanged: (mode) {
+                      if (mode != null) appController.themeMode.value = mode;
+                    },
                   ),
-                  onChanged: (mode) {
-                    if (mode != null) appController.themeMode.value = mode;
-                  },
                 ),
+                onPressed: () {},
               ),
             ],
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

@@ -4,6 +4,7 @@ go 1.24.2
 
 require (
 	crawshaw.io/sqlite v0.3.2
+	github.com/dchest/captcha v1.1.0
 	github.com/gofiber/fiber/v3 v3.0.0-beta.4
 	golang.org/x/crypto v0.31.0
 )

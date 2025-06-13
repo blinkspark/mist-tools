@@ -1,8 +1,6 @@
 package main
 
 import (
-	"bytes"
-	"image/png"
 	"log"
 	"os"
 
@@ -122,12 +120,8 @@ func main() {
 			return c.Status(400).SendString("缺少captchaId")
 		}
 		c.Set("Content-Type", "image/png")
-		img := captcha.NewImage(captchaId, captcha.RandomDigits(6), 120, 40)
-		buf := new(bytes.Buffer)
-		if err := png.Encode(buf, img); err != nil {
-			return c.Status(500).SendString("生成验证码图片失败")
-		}
-		return c.Send(buf.Bytes())
+		// 用官方推荐的 WriteImage 保证图片内容和答案一致
+		return captcha.WriteImage(c.Response().BodyWriter(), captchaId, 120, 40)
 	})
 
 	// 获取验证码ID

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mist_tools/widgets/settings/setting_section.dart';
+import 'package:mist_tools/widgets/settings/login_register_dialog.dart';
 
 import '../controllers/app_controller.dart';
 
@@ -36,7 +37,23 @@ class SettingsPage extends StatelessWidget {
             children: [
               SettingSectionItem(
                 title: '登录',
-                onPressed: () {},
+                onPressed: () async {
+                  final result = await showDialog(
+                    context: context,
+                    builder: (ctx) => const LoginRegisterDialog(isLogin: true),
+                  );
+                  // 可根据 result 做登录后处理
+                },
+              ),
+              SettingSectionItem(
+                title: '注册',
+                onPressed: () async {
+                  final result = await showDialog(
+                    context: context,
+                    builder: (ctx) => const LoginRegisterDialog(isLogin: false),
+                  );
+                  // 可根据 result 做注册后处理
+                },
               ),
             ],
           ),

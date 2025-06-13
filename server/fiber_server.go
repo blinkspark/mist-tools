@@ -10,6 +10,7 @@ import (
 	"crawshaw.io/sqlite/sqlitex"
 	"github.com/dchest/captcha"
 	"github.com/gofiber/fiber/v3"
+	gozap "go.uber.org/zap"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -20,6 +21,10 @@ type User struct {
 }
 
 func main() {
+	// 初始化 zap logger
+	logger, _ := gozap.NewProduction()
+	defer logger.Sync()
+
 	dbPath := "users.db"
 	conn, err := sqlite.OpenConn(dbPath, sqlite.SQLITE_OPEN_CREATE|sqlite.SQLITE_OPEN_READWRITE)
 	if err != nil {
@@ -47,8 +52,10 @@ func main() {
 			Captcha   string `json:"captcha"`
 		}
 		if err := c.Bind().Body(&req); err != nil {
+			logger.Warn("register参数错误", gozap.Any("body", c.Body()))
 			return c.Status(400).JSON(fiber.Map{"error": "参数错误"})
 		}
+		logger.Info("用户注册请求", gozap.String("username", req.Username), gozap.String("captcha_id", req.CaptchaId), gozap.String("captcha", req.Captcha))
 		if req.Username == "" || req.Password == "" {
 			return c.Status(400).JSON(fiber.Map{"error": "用户名和密码不能为空"})
 		}
@@ -82,8 +89,10 @@ func main() {
 			Captcha   string `json:"captcha"`
 		}
 		if err := c.Bind().Body(&req); err != nil {
+			logger.Warn("login参数错误", gozap.Any("body", c.Body()))
 			return c.Status(400).JSON(fiber.Map{"error": "参数错误"})
 		}
+		logger.Info("用户登录请求", gozap.String("username", req.Username), gozap.String("captcha_id", req.CaptchaId), gozap.String("captcha", req.Captcha))
 		if req.CaptchaId == "" || req.Captcha == "" {
 			return c.Status(400).JSON(fiber.Map{"error": "验证码不能为空"})
 		}
@@ -131,5 +140,6 @@ func main() {
 	if port == "" {
 		port = "22333"
 	}
+	logger.Info("服务启动", gozap.String("port", port))
 	log.Fatal(app.Listen(":" + port))
 }

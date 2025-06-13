@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:logger/logger.dart';
 
 Future<String> fetchCaptchaId() async {
   final resp = await http.get(Uri.parse('http://localhost:22333/captcha'));
@@ -27,6 +28,7 @@ class _LoginRegisterDialogState extends State<LoginRegisterDialog> {
   String captchaId = '';
   String errorMsg = '';
   bool loading = false;
+  final logger = Logger();
 
   @override
   void initState() {
@@ -63,6 +65,8 @@ class _LoginRegisterDialogState extends State<LoginRegisterDialog> {
       }),
     );
     setState(() { loading = false; });
+    // 使用全局logger输出API返回内容
+    Get.find<Logger>().i('API返回: ${resp.body}');
     if (resp.statusCode == 200) {
       Navigator.of(context).pop(true);
     } else {

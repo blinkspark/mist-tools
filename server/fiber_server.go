@@ -3,11 +3,13 @@ package main
 import (
 	"log"
 	"os"
+	"time"
 
 	"crawshaw.io/sqlite"
 	"crawshaw.io/sqlite/sqlitex"
 	"github.com/dchest/captcha"
 	"github.com/gofiber/fiber/v3"
+	"github.com/golang-jwt/jwt/v5"
 	gozap "go.uber.org/zap"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -17,6 +19,8 @@ type User struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
 }
+
+var jwtSecret = []byte("your_secret_key") // 建议放到配置文件或环境变量
 
 func main() {
 	// 初始化 zap logger
@@ -76,7 +80,17 @@ func main() {
 		if err != nil {
 			return c.Status(400).JSON(fiber.Map{"error": "用户名已存在"})
 		}
-		return c.JSON(fiber.Map{"msg": "注册成功"})
+
+		// 注册成功后生成JWT
+		token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+			"username": req.Username,
+			"exp":      time.Now().Add(time.Hour * 24).Unix(),
+		})
+		tokenString, err := token.SignedString(jwtSecret)
+		if err != nil {
+			return c.Status(500).JSON(fiber.Map{"error": "生成token失败"})
+		}
+		return c.JSON(fiber.Map{"msg": "注册成功", "token": tokenString, "username": req.Username})
 	})
 
 	app.Post("/login", func(c fiber.Ctx) error {
@@ -104,10 +118,18 @@ func main() {
 			return c.Status(500).JSON(fiber.Map{"error": "数据库错误"})
 		}
 		if row {
-			id := stmt.ColumnInt64(0)
 			hash := stmt.ColumnText(1)
 			if bcrypt.CompareHashAndPassword([]byte(hash), []byte(req.Password)) == nil {
-				return c.JSON(fiber.Map{"msg": "登录成功", "user_id": id})
+				// 登录成功后生成JWT
+				token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+					"username": req.Username,
+					"exp":      time.Now().Add(time.Hour * 24).Unix(),
+				})
+				tokenString, err := token.SignedString(jwtSecret)
+				if err != nil {
+					return c.Status(500).JSON(fiber.Map{"error": "生成token失败"})
+				}
+				return c.JSON(fiber.Map{"msg": "登录成功", "token": tokenString, "username": req.Username})
 			}
 		}
 		return c.Status(401).JSON(fiber.Map{"error": "用户名或密码错误"})
